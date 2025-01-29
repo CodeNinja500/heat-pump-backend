@@ -22,7 +22,7 @@ app.use(express.json());
 // CORS
 app.use(
     cors({
-        origin: "http://localhost:4200", // Replace with your Angular app's domain
+        origin: ["http://localhost:4200", "http://192.168.0.9"], // Replace with your Angular app's domain
     })
 );
 

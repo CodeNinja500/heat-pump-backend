@@ -1,12 +1,12 @@
+function getRandomBooleanValue(): boolean {
+    return Math.random() >= 0.5;
+}
+
 export function readTemperatureFromModbus(): number {
     // Simulate Modbus data: Random value between 20 and 36
     const simulatedValue = Math.floor(Math.random() * (36 - 20 + 1)) + 20;
     console.log("Temparature value:", simulatedValue);
     return simulatedValue;
-}
-
-function getRandomBooleanValue(): boolean {
-    return Math.random() >= 0.5;
 }
 
 export function readCompressorStatusFromModbus(): boolean {

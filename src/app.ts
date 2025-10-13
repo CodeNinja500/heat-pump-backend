@@ -1,17 +1,8 @@
-import express from "express";
-import { initializeDatabase } from "./database";
-import modbusRoutes from "./routes/index";
-import {
-    readCompressorStatusFromModbus,
-    readDefrostStatusFromModbus,
-    readTemperatureFromModbus,
-    readVentilatorStatusFromModbus,
-} from "./modbus";
-import { storeTemperature } from "./controllers/temperatureController";
-import { storeCompressorStatus } from "./controllers/compressorController";
-import { storeVentilatorStatus } from "./controllers/fanController";
-import { storeDefrostStatus } from "./controllers/defrostController";
-import cors from "cors";
+import express from 'express';
+import cors from 'cors';
+import { DataService } from './services/buffer.service';
+import { createModbusRouter } from './routes/dataRoutes';
+import { initializeDatabase } from './database';
 
 const app = express();
 const port = 3000;
@@ -21,58 +12,22 @@ app.use(express.json());
 
 // CORS
 app.use(
-    cors({
-        origin: ["http://localhost:4200", "http://192.168.0.9"], // Replace with your Angular app's domain
-    })
+  cors({
+    origin: ['http://localhost:4200', 'http://192.168.0.9'] // Replace with your Angular app's domain
+  })
 );
 
 // Initialize database
 const db = initializeDatabase();
 
-// Use routes
-app.use("/api", modbusRoutes(db));
+//Initialize DataService
+const dataService = new DataService();
+dataService.start(5000, 48 * 60 * 60 * 1000); // read every 5s, flush every 48h
 
-// Schedule Modbus Data Collection
-setInterval(async () => {
-    const temperature = readTemperatureFromModbus();
-    console.log("Temperature from Modbus:", temperature);
-    const ventilatorStatus = readVentilatorStatusFromModbus();
-    console.log("Fan status from Modbus:", ventilatorStatus);
-    const compressorStatus = readCompressorStatusFromModbus();
-    console.log("Compressor status from Modbus:", compressorStatus);
-    const defrosterStatus = readDefrostStatusFromModbus();
-    console.log("Defroster status from Modbus:", defrosterStatus);
-
-    try {
-        await storeTemperature(db, temperature);
-        console.log("Stored temperature value in the database:", temperature);
-    } catch (err: any) {
-        console.error("Failed to store temperature in database:", err.message);
-    }
-
-    try {
-        await storeCompressorStatus(db, compressorStatus);
-        console.log("Stored compressor status in the database:", compressorStatus);
-    } catch (err: any) {
-        console.error("Failed to store compressor status in database:", err.message);
-    }
-
-    try {
-        await storeVentilatorStatus(db, ventilatorStatus);
-        console.log("Stored ventilator status in the database:", ventilatorStatus);
-    } catch (err: any) {
-        console.error("Failed to store ventilator status in database:", err.message);
-    }
-
-    try {
-        await storeDefrostStatus(db, defrosterStatus);
-        console.log("Stored defrost status in the database:", defrosterStatus);
-    } catch (err: any) {
-        console.error("Failed to store defrost status in database:", err.message);
-    }
-}, 10 * 1000); // 5 minutes in milliseconds
+// Mount the modbus routes
+app.use('/api', createModbusRouter(dataService));
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });

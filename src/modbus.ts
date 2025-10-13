@@ -1,31 +1,12 @@
-function getRandomBooleanValue(): boolean {
-    return Math.random() >= 0.5;
+export async function readTemperatureFromModbus(): Promise<number> {
+  return 20 + Math.random() * 10;
 }
-
-export function readTemperatureFromModbus(): number {
-    // Simulate Modbus data: Random value between 20 and 36
-    const simulatedValue = Math.floor(Math.random() * (36 - 20 + 1)) + 20;
-    console.log("Temparature value:", simulatedValue);
-    return simulatedValue;
+export async function readCompressorStatusFromModbus(): Promise<boolean> {
+  return Math.random() > 0.5;
 }
-
-export function readCompressorStatusFromModbus(): boolean {
-    // Simulate Modbus data: Random boolean value
-    const simulatedValue = getRandomBooleanValue();
-    console.log("Compressor status:", simulatedValue);
-    return simulatedValue;
+export async function readFanStatusFromModbus(): Promise<boolean> {
+  return Math.random() > 0.5;
 }
-
-export function readVentilatorStatusFromModbus(): boolean {
-    // Simulate Modbus data: Random boolean value
-    const simulatedValue = getRandomBooleanValue();
-    console.log("Ventilator status:", simulatedValue);
-    return simulatedValue;
-}
-
-export function readDefrostStatusFromModbus(): boolean {
-    // Simulate Modbus data: Random boolean value
-    const simulatedValue = getRandomBooleanValue();
-    console.log("Defrost status:", simulatedValue);
-    return simulatedValue;
+export async function readDefrostStatusFromModbus(): Promise<boolean> {
+  return Math.random() > 0.5;
 }

@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { DataService } from './services/buffer.service';
 import { createModbusRouter } from './routes/dataRoutes';
-import { initializeDatabase } from './database';
 
 const app = express();
 const port = 3000;
@@ -17,12 +16,9 @@ app.use(
   })
 );
 
-// Initialize database
-const db = initializeDatabase();
-
 //Initialize DataService
 const dataService = new DataService();
-dataService.start(5000, 48 * 60 * 60 * 1000); // read every 5s, flush every 48h
+dataService.start(10000, 48 * 60 * 60 * 1000); // read every 5s, flush every 48h
 
 // Mount the modbus routes
 app.use('/api', createModbusRouter(dataService));

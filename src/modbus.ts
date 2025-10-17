@@ -33,10 +33,15 @@ export async function readTemperatureFromModbus(): Promise<number> {
     console.warn('⚠️  No data because of Modbus connection fail');
     return 0;
   }
-  const res = await client.readHoldingRegisters(118, 1);
-  const value = res.data[0];
-  console.log('Temperature value:', value);
-  return value;
+  try {
+    const res = await client.readHoldingRegisters(118, 1);
+    const value = res.data[0];
+    console.log('Temperature value:', value);
+    return value;
+  } catch (err: any) {
+    console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+    return 0; // or maybe NaN/null, depending on your logic
+  }
 }
 
 export async function readCompressorStatusFromModbus(): Promise<boolean> {
@@ -45,10 +50,15 @@ export async function readCompressorStatusFromModbus(): Promise<boolean> {
     console.warn('⚠️  No data because of Modbus connection fail');
     return false;
   }
-  const res = await client.readCoils(80, 1);
-  const value = res.data[0];
-  console.log('Compressor status:', value);
-  return value;
+  try {
+    const res = await client.readCoils(80, 1);
+    const value = res.data[0];
+    console.log('Compressor status:', value);
+    return value;
+  } catch (err: any) {
+    console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+    return false; // or maybe NaN/null, depending on your logic
+  }
 }
 
 export async function readFanStatusFromModbus(): Promise<boolean> {
@@ -57,10 +67,15 @@ export async function readFanStatusFromModbus(): Promise<boolean> {
     console.warn('⚠️  No data because of Modbus connection fail');
     return false;
   }
-  const res = await client.readCoils(81, 1);
-  const value = res.data[0];
-  console.log('Ventilator status:', value);
-  return value;
+  try {
+    const res = await client.readCoils(81, 1);
+    const value = res.data[0];
+    console.log('Ventilator status:', value);
+    return value;
+  } catch (err: any) {
+    console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+    return false; // or maybe NaN/null, depending on your logic
+  }
 }
 
 export async function readDefrostStatusFromModbus(): Promise<boolean> {
@@ -69,8 +84,13 @@ export async function readDefrostStatusFromModbus(): Promise<boolean> {
     console.warn('⚠️  No data because of Modbus connection fail');
     return false;
   }
-  const res = await client.readCoils(86, 1);
-  const value = res.data[0];
-  console.log('Defrost status:', value);
-  return value;
+  try {
+    const res = await client.readCoils(86, 1);
+    const value = res.data[0];
+    console.log('Defrost status:', value);
+    return value;
+  } catch (err: any) {
+    console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+    return false; // or maybe NaN/null, depending on your logic
+  }
 }

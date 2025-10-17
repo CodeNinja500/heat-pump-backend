@@ -2,6 +2,7 @@
 import ModbusRTU from 'modbus-serial';
 
 const client = new ModbusRTU();
+client.setTimeout(2000);
 let connected = false;
 let modbusAvailable = true;
 
@@ -34,6 +35,7 @@ export async function readTemperatureFromModbus(): Promise<number> {
     return 0;
   }
   try {
+    console.log('Trying to read temperature');
     const res = await client.readHoldingRegisters(118, 1);
     const value = res.data[0];
     console.log('Temperature value:', value);

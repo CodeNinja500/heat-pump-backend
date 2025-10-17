@@ -11,6 +11,7 @@ exports.readDefrostStatusFromModbus = readDefrostStatusFromModbus;
 // modbus.js
 const modbus_serial_1 = __importDefault(require("modbus-serial"));
 const client = new modbus_serial_1.default();
+client.setTimeout(2000);
 let connected = false;
 let modbusAvailable = true;
 // Connect once at startup
@@ -20,7 +21,7 @@ async function connectModbus() {
     if (connected)
         return true;
     try {
-        await client.connectRTUBuffered('/dev/ttyS1', {
+        await client.connectRTUBuffered('/dev/ttyS5', {
             baudRate: 9600,
             dataBits: 8,
             stopBits: 1,
@@ -43,10 +44,17 @@ async function readTemperatureFromModbus() {
         console.warn('⚠️  No data because of Modbus connection fail');
         return 0;
     }
-    const res = await client.readHoldingRegisters(118, 1);
-    const value = res.data[0];
-    console.log('Temperature value:', value);
-    return value;
+    try {
+        console.log('Trying to read temperature');
+        const res = await client.readHoldingRegisters(118, 1);
+        const value = res.data[0];
+        console.log('Temperature value:', value);
+        return value;
+    }
+    catch (err) {
+        console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+        return 0; // or maybe NaN/null, depending on your logic
+    }
 }
 async function readCompressorStatusFromModbus() {
     const ok = await connectModbus();
@@ -54,10 +62,16 @@ async function readCompressorStatusFromModbus() {
         console.warn('⚠️  No data because of Modbus connection fail');
         return false;
     }
-    const res = await client.readCoils(80, 1);
-    const value = res.data[0];
-    console.log('Compressor status:', value);
-    return value;
+    try {
+        const res = await client.readCoils(80, 1);
+        const value = res.data[0];
+        console.log('Compressor status:', value);
+        return value;
+    }
+    catch (err) {
+        console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+        return false; // or maybe NaN/null, depending on your logic
+    }
 }
 async function readFanStatusFromModbus() {
     const ok = await connectModbus();
@@ -65,10 +79,16 @@ async function readFanStatusFromModbus() {
         console.warn('⚠️  No data because of Modbus connection fail');
         return false;
     }
-    const res = await client.readCoils(81, 1);
-    const value = res.data[0];
-    console.log('Ventilator status:', value);
-    return value;
+    try {
+        const res = await client.readCoils(81, 1);
+        const value = res.data[0];
+        console.log('Ventilator status:', value);
+        return value;
+    }
+    catch (err) {
+        console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+        return false; // or maybe NaN/null, depending on your logic
+    }
 }
 async function readDefrostStatusFromModbus() {
     const ok = await connectModbus();
@@ -76,8 +96,14 @@ async function readDefrostStatusFromModbus() {
         console.warn('⚠️  No data because of Modbus connection fail');
         return false;
     }
-    const res = await client.readCoils(86, 1);
-    const value = res.data[0];
-    console.log('Defrost status:', value);
-    return value;
+    try {
+        const res = await client.readCoils(86, 1);
+        const value = res.data[0];
+        console.log('Defrost status:', value);
+        return value;
+    }
+    catch (err) {
+        console.error('❌ Failed to read temperature from Modbus:', err.message || err);
+        return false; // or maybe NaN/null, depending on your logic
+    }
 }

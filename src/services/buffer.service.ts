@@ -30,6 +30,7 @@ export class DataService {
 
     // Read Modbus data periodically
     this.readInterval = setInterval(async () => {
+      console.log('🔄 Reading Modbus data...');
       const now = new Date().toISOString();
 
       this.temperatureBuffer.push({

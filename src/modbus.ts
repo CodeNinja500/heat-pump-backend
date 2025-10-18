@@ -36,7 +36,7 @@ export async function readTemperatureFromModbus(): Promise<number> {
   }
   try {
     console.log('Trying to read temperature');
-    const res = await client.readHoldingRegisters(118, 1);
+    const res = await client.readHoldingRegisters(125, 1);
     const value = res.data[0];
     console.log('Temperature value:', value);
     return value;
